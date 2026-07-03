@@ -1,6 +1,8 @@
 # Top Spirit plan
 
-A plain-language plan for process improvement, AI training, and better reporting at Top Spirit, by AngelServ (Angel Software Solutions).
+A plain-language plan for process improvement, AI training, and better reporting at Top Spirit. Prepared by Angel Software Solutions LLC.
+
+Angel Software Solutions LLC: Keith Swoger (CEO), Will Humphries (CTO), Andrew Demczuk (CRO).
 
 Live: https://ademczuk.github.io/top-spirit-plan/
 
