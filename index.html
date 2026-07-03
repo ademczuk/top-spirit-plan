@@ -1,0 +1,445 @@
+<title>Top Spirit: Time Back, Clear Numbers, Safe AI</title>
+<style>
+  :root {
+    --ink: #14100c;
+    --panel: #1f1812;
+    --panel-2: #241c14;
+    --cream: #f3ead9;
+    --cream-dim: #b8a98e;
+    --gold: #c99b3f;
+    --gold-soft: #8a6524;
+    --line: rgba(201, 155, 63, 0.28);
+    --serif: Georgia, 'Times New Roman', serif;
+    --sans: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--ink); color: var(--cream); font-family: var(--sans); }
+
+  .slide {
+    min-height: 100vh;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    padding: 7vh 8vw 10vh 8vw;
+    position: relative;
+    background:
+      radial-gradient(1200px 600px at 85% -10%, rgba(201,155,63,0.10), transparent 60%),
+      radial-gradient(900px 500px at -10% 110%, rgba(201,155,63,0.06), transparent 55%),
+      var(--ink);
+  }
+  .slide.active { display: flex; }
+
+  .brand {
+    position: absolute; top: 34px; left: 8vw;
+    font-family: var(--sans); font-weight: 700; letter-spacing: 0.06em; font-size: 15px; color: var(--cream);
+  }
+  .brand b { color: var(--gold); font-weight: 700; }
+  .brand small { display: block; font-weight: 400; letter-spacing: 0.32em; font-size: 8.5px; color: var(--cream-dim); margin-top: 3px; text-transform: uppercase; }
+
+  .eyebrow {
+    font-size: 12px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--gold);
+    margin-bottom: 20px; display: flex; align-items: center; gap: 14px;
+  }
+  .eyebrow::before { content: ''; width: 34px; height: 1px; background: var(--gold); }
+
+  h1, h2 { font-family: var(--serif); font-weight: 400; text-wrap: balance; margin: 0 0 18px 0; line-height: 1.12; }
+  h1 { font-size: clamp(38px, 5.2vw, 64px); }
+  h2 { font-size: clamp(28px, 3.6vw, 46px); }
+  .accent { color: var(--gold); font-style: italic; }
+
+  .lede { font-size: clamp(15px, 1.3vw, 19px); color: var(--cream-dim); max-width: 66ch; line-height: 1.6; margin: 0; }
+
+  ul.points { list-style: none; margin: 24px 0 0 0; padding: 0; max-width: 940px; }
+  ul.points li {
+    position: relative; padding: 11px 0 11px 34px;
+    font-size: clamp(15px, 1.3vw, 19px); line-height: 1.5;
+    border-bottom: 1px solid rgba(243, 234, 217, 0.07);
+  }
+  ul.points li:last-child { border-bottom: none; }
+  ul.points li::before { content: ''; position: absolute; left: 4px; top: 22px; width: 10px; height: 1px; background: var(--gold); }
+  ul.points li strong { color: var(--gold); font-weight: 600; }
+
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px; margin-top: 28px; }
+  .card { background: var(--panel); border: 1px solid var(--line); padding: 24px 22px; display: flex; flex-direction: column; gap: 9px; }
+  .card .k { font-family: var(--serif); font-size: 28px; color: var(--gold); line-height: 1; }
+  .card .t { font-size: 16px; font-weight: 600; color: var(--cream); }
+  .card .d { font-size: 14px; line-height: 1.55; color: var(--cream-dim); }
+
+  .timeline { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; margin-top: 34px; border-top: 1px solid var(--line); }
+  .tl-step { padding-top: 22px; position: relative; }
+  .tl-step::before { content: ''; position: absolute; top: -5px; left: 0; width: 9px; height: 9px; border-radius: 50%; background: var(--gold); }
+  .tl-step .w { font-size: 11.5px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
+  .tl-step .h { font-family: var(--serif); font-size: 21px; margin-bottom: 8px; color: var(--cream); }
+  .tl-step .b { font-size: 14px; color: var(--cream-dim); line-height: 1.6; }
+
+  .qa { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 30px; margin-top: 28px; }
+  .qa .q { background: var(--panel); border: 1px solid var(--line); padding: 18px 20px; }
+  .qa .q .qq { font-family: var(--serif); font-size: 17.5px; color: var(--gold); margin-bottom: 7px; }
+  .qa .q .qa-a { font-size: 14px; line-height: 1.55; color: var(--cream-dim); }
+
+  .rule-box {
+    margin-top: 28px; max-width: 720px;
+    border: 1px solid var(--line); background: var(--panel);
+    padding: 20px 26px;
+  }
+  .rule-box .rt { font-size: 11.5px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
+  .rule-box .rb { font-family: var(--serif); font-size: clamp(17px, 1.6vw, 23px); line-height: 1.45; color: var(--cream); }
+
+  .foot {
+    position: absolute; bottom: 24px; left: 8vw; right: 8vw;
+    padding-right: 118px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(184,169,142,0.5);
+  }
+  .foot .num { color: var(--gold-soft); font-variant-numeric: tabular-nums; }
+
+  .nav { position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%); display: flex; gap: 7px; z-index: 10; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: rgba(243,234,217,0.18); cursor: pointer; border: none; padding: 0; }
+  .dot.on { background: var(--gold); }
+  .arrows { position: fixed; right: 26px; bottom: 14px; z-index: 10; display: flex; gap: 6px; }
+  .arrows button {
+    background: var(--panel); color: var(--cream); border: 1px solid var(--line);
+    font-size: 16px; width: 38px; height: 38px; cursor: pointer;
+  }
+  .arrows button:hover, .arrows button:focus-visible { border-color: var(--gold); outline: none; color: var(--gold); }
+  .hint { position: fixed; right: 28px; top: 34px; z-index: 10; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(184,169,142,0.45); }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .slide.active > * { animation: rise 0.45s ease both; }
+    .slide.active > *:nth-child(3) { animation-delay: 0.06s; }
+    .slide.active > *:nth-child(4) { animation-delay: 0.12s; }
+    .slide.active > *:nth-child(5) { animation-delay: 0.18s; }
+    @keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  }
+
+  @media (max-width: 720px) {
+    .timeline { grid-template-columns: 1fr; gap: 20px; }
+    .qa { grid-template-columns: 1fr; }
+    .slide { padding: 9vh 7vw 12vh 7vw; }
+  }
+
+  @media print {
+    @page { size: A4 landscape; margin: 0; }
+    html, body { background: var(--ink); }
+    .nav, .arrows, .hint { display: none !important; }
+    .slide { display: flex !important; min-height: 100vh; page-break-after: always; break-after: page; }
+  }
+</style>
+
+<div class="deck" id="deck">
+
+  <!-- 1: Title -->
+  <section class="slide active">
+    <div class="brand">TOP<b>SPIRIT</b> &times; ANGELSERV<small>A plan for the leadership team</small></div>
+    <div class="eyebrow">Top Spirit GmbH, Vienna &middot; July 2026</div>
+    <h1>Time back. Clear numbers.<br><span class="accent">AI your team can trust.</span></h1>
+    <p class="lede">Less time on manual work, more time for brands and customers. A plain-language plan for process improvement, AI training, and better reporting at Top Spirit.</p>
+    <ul class="points" style="margin-top:32px; max-width:560px;">
+      <li>Andrew Demczuk, AngelServ by Angel Software Solutions</li>
+      <li>Built on the expectations paper you sent us</li>
+    </ul>
+    <div class="foot"><span>Top Spirit &middot; AngelServ</span><span class="num">01 / 16</span></div>
+  </section>
+
+  <!-- 2: Where you are today -->
+  <section class="slide">
+    <div class="eyebrow">The starting point &middot; from your expectations paper</div>
+    <h2>Where you are today</h2>
+    <ul class="points">
+      <li>Reports are built <strong>by hand</strong> from ERP exports and Excel</li>
+      <li>Valuable know-how and business logic is <strong>not yet written down</strong></li>
+      <li>The next ERP decision is open and needs <strong>vendor-neutral advice</strong></li>
+      <li>You asked for data rules and <strong>human approval from day one</strong></li>
+    </ul>
+    <p class="lede" style="margin-top:24px;">Each point above comes from your own expectations paper. This plan answers it point by point.</p>
+    <div class="foot"><span>The starting point</span><span class="num">02 / 16</span></div>
+  </section>
+
+  <!-- 3: What you get -->
+  <section class="slide">
+    <div class="eyebrow">The outcome</div>
+    <h2>What you get</h2>
+    <div class="cards">
+      <div class="card">
+        <div class="k">I.</div>
+        <div class="t">Time back</div>
+        <div class="d">AI tools draft the routine reports on orders, stock, and customers. Your people check and approve them. A job of hours becomes a short review.</div>
+      </div>
+      <div class="card">
+        <div class="k">II.</div>
+        <div class="t">One agreed set of numbers</div>
+        <div class="d">Net sales, gross profit, and depletions mean the same thing in every meeting. One glossary, one truth, every report.</div>
+      </div>
+      <div class="card">
+        <div class="k">III.</div>
+        <div class="t">A team that uses AI well</div>
+        <div class="d">Every department learns to use AI tools safely on real work, with clear approval rules. The skill stays in the company.</div>
+      </div>
+      <div class="card">
+        <div class="k">IV.</div>
+        <div class="t">Decisions you can act on</div>
+        <div class="d">Your processes documented, department by department, and the facts on the table for the ERP decision when you are ready to take it.</div>
+      </div>
+    </div>
+    <p class="lede" style="margin-top:26px;">A working preview of the dashboard already exists, built on sample files shaped like your exports. You will see it live in the meeting.</p>
+    <div class="foot"><span>The outcome</span><span class="num">03 / 16</span></div>
+  </section>
+
+  <!-- 4: The work I propose -->
+  <section class="slide">
+    <div class="eyebrow">The work</div>
+    <h2>The work I propose</h2>
+    <ul class="points">
+      <li><strong>Map the work:</strong> how orders, invoices, and stock really flow, department by department</li>
+      <li><strong>Remove double-work:</strong> AI drafts it, your person approves it, then it counts</li>
+      <li><strong>Train the teams:</strong> every department learns to use AI tools confidently and safely</li>
+      <li><strong>Build dashboards:</strong> the files you already export become clear, current reports</li>
+      <li><strong>Prepare the ERP decision:</strong> vendor-neutral advice, when you are ready</li>
+    </ul>
+    <p class="lede" style="margin-top:24px;">Where automation justifies a real connection between systems, I build it. Until then, exported files keep it simple, safe, and within budget.</p>
+    <div class="foot"><span>The work</span><span class="num">04 / 16</span></div>
+  </section>
+
+  <!-- 5: Quick wins -->
+  <section class="slide">
+    <div class="eyebrow">Where we would start</div>
+    <h2>Three quick wins</h2>
+    <ul class="points">
+      <li>The <strong>depletion report to your brand partners</strong>: built once, refreshed in minutes</li>
+      <li>Price lists per customer group: updated from <strong>one source file</strong>, checked by the owner</li>
+      <li>"What did we sell to gastronomy in May?" <strong>Answered in minutes</strong></li>
+    </ul>
+    <div class="rule-box">
+      <div class="rt">The approval rule, once and for all</div>
+      <div class="rb">AI drafts. Your person approves. Nothing reaches a customer, a partner, or the books unchecked.</div>
+    </div>
+    <div class="foot"><span>Where we would start</span><span class="num">05 / 16</span></div>
+  </section>
+
+  <!-- 6: How I work -->
+  <section class="slide">
+    <div class="eyebrow">How I work</div>
+    <h2>How I work, and why it is safe</h2>
+    <ul class="points">
+      <li>I build and test on <strong>copies of exported files</strong>, not inside your live systems</li>
+      <li>Anything that writes into a live system is switched on <strong>only by your people</strong>, after testing</li>
+      <li>First candidate for the AI tool: <strong>Microsoft Copilot Chat</strong>, already in your Microsoft plan</li>
+      <li>Until IT confirms data handling, no customer data enters any AI tool</li>
+      <li>Everything I build <strong>stays yours</strong>, documented, built together with your team</li>
+    </ul>
+    <div class="foot"><span>How I work</span><span class="num">06 / 16</span></div>
+  </section>
+
+  <!-- 7: Literacy phases -->
+  <section class="slide">
+    <div class="eyebrow">AI training rollout &middot; 1 of 3</div>
+    <h2>AI training in three phases</h2>
+    <div class="timeline">
+      <div class="tl-step">
+        <div class="w">Phase 1 &middot; Foundations</div>
+        <div class="h">Ground rules first</div>
+        <div class="b">Together we set the rules: what may go into AI tools, what never does. A short survey shows where each team stands. No test, no pressure.</div>
+      </div>
+      <div class="tl-step">
+        <div class="w">Phase 2 &middot; Training</div>
+        <div class="h">Small groups, real tasks</div>
+        <div class="b">Office and order desk, sales, finance, logistics, leadership. Each group practices on its own weekly work, not on toy examples.</div>
+      </div>
+      <div class="tl-step">
+        <div class="w">Phase 3 &middot; Making it stick</div>
+        <div class="h">Part of normal work</div>
+        <div class="b">One go-to colleague per department, a weekly open hour for questions, results shared with everyone once a month.</div>
+      </div>
+    </div>
+    <p class="lede" style="margin-top:28px;">The three phases run inside the same first 90 days as the rest of the plan. The weekly open hour then continues as a standing routine.</p>
+    <div class="foot"><span>AI training rollout</span><span class="num">07 / 16</span></div>
+  </section>
+
+  <!-- 8: Training session -->
+  <section class="slide">
+    <div class="eyebrow">AI training rollout &middot; 2 of 3</div>
+    <h2>What a training session looks like</h2>
+    <ul class="points">
+      <li>90 minutes, a group of four to six colleagues</li>
+      <li>Everyone brings <strong>one real task</strong> from their own week</li>
+      <li>A supplier email, a price list, a monthly report: we do it together with the AI tool</li>
+      <li>Every session ends with each person naming <strong>one task they now do faster</strong></li>
+    </ul>
+    <p class="lede" style="margin-top:24px;">No classroom theory. The training happens on the work itself, so the time is repaid the same week.</p>
+    <div class="foot"><span>AI training rollout</span><span class="num">08 / 16</span></div>
+  </section>
+
+  <!-- 9: After the program -->
+  <section class="slide">
+    <div class="eyebrow">AI training rollout &middot; 3 of 3</div>
+    <h2>What your team can do after</h2>
+    <ul class="points">
+      <li>Write and translate business text in German and English</li>
+      <li>Summarize long documents in minutes, not hours</li>
+      <li>Prepare first drafts of analyses and reports</li>
+      <li>Draft replies to customers and suppliers faster</li>
+      <li>Ask questions of your own sales data in plain words</li>
+    </ul>
+    <p class="lede" style="margin-top:24px;">The goal is to shrink the boring work, not the team. What you do with the freed hours is your decision.</p>
+    <div class="foot"><span>AI training rollout</span><span class="num">09 / 16</span></div>
+  </section>
+
+  <!-- 10: Reports to dashboards -->
+  <section class="slide">
+    <div class="eyebrow">Reporting rollout &middot; 1 of 3</div>
+    <h2>From hand-built reports to dashboards</h2>
+    <ul class="points">
+      <li>Today: the same reports rebuilt by hand from exports, again and again</li>
+      <li>Tomorrow: dashboards your reporting team (BI) refreshes <strong>from the export folder</strong></li>
+      <li>We start with <strong>the one report everyone dreads</strong></li>
+      <li>Rebuild it once, count the hours saved, then take the next one</li>
+      <li>Power BI Desktop is <strong>Microsoft's free reporting tool</strong>: no license for the pilot</li>
+    </ul>
+    <p class="lede" style="margin-top:24px;">If you later want automatic sharing across the company, that is a separate license decision, made with a business case first. That is your own rule, and it is a good one.</p>
+    <div class="foot"><span>Reporting rollout</span><span class="num">10 / 16</span></div>
+  </section>
+
+  <!-- 11: One definition -->
+  <section class="slide">
+    <div class="eyebrow">Reporting rollout &middot; 2 of 3</div>
+    <h2>One agreed definition per number</h2>
+    <ul class="points">
+      <li>Today "net sales" can mean different things in different departments</li>
+      <li>Same with gross profit and depletions</li>
+      <li>We write down <strong>one agreed definition per key figure</strong></li>
+      <li>Every report then shows the same truth</li>
+      <li>Meetings spend time on decisions, not on whose number is right</li>
+    </ul>
+    <p class="lede" style="margin-top:24px;">The glossary stays with your team and moves with you into the next ERP, whichever one you choose.</p>
+    <div class="foot"><span>Reporting rollout</span><span class="num">11 / 16</span></div>
+  </section>
+
+  <!-- 12: What leadership sees -->
+  <section class="slide">
+    <div class="eyebrow">Reporting rollout &middot; 3 of 3</div>
+    <h2>What you see at the end</h2>
+    <ul class="points">
+      <li>One screen with the numbers that matter</li>
+      <li>Sales by brand and channel, open orders, and stock cover on your top products <strong>before the Christmas quarter</strong></li>
+      <li>Routine questions answered at a glance, not with a request and a wait</li>
+      <li>Built <strong>together with your BI people</strong>, so they can extend it without me</li>
+      <li>Runs on your export files, so it <strong>survives the ERP change</strong></li>
+    </ul>
+    <div class="foot"><span>Reporting rollout</span><span class="num">12 / 16</span></div>
+  </section>
+
+  <!-- 13: 90 days -->
+  <section class="slide">
+    <div class="eyebrow">The plan</div>
+    <h2>The first 90 days</h2>
+    <div class="timeline">
+      <div class="tl-step">
+        <div class="w">Weeks 1 to 2</div>
+        <div class="h">Ground rules</div>
+        <div class="b">Data rules agreed, the AI tool chosen with your IT, every hand-built report listed and timed. From then on we count in real hours, not estimates.</div>
+      </div>
+      <div class="tl-step">
+        <div class="w">Weeks 3 to 6</div>
+        <div class="h">First wins</div>
+        <div class="b">First training rounds run. The first report rebuilt with its owner and in regular use. A short prioritized list of automation opportunities, each with the hours it would save.</div>
+      </div>
+      <div class="tl-step">
+        <div class="w">Weeks 7 to 12</div>
+        <div class="h">Scale and decide</div>
+        <div class="b">The next departments trained, first automations approved by your people, a results review with leadership, and a vendor-neutral ERP recommendation covering the migration path.</div>
+      </div>
+    </div>
+    <p class="lede" style="margin-top:28px;">What it needs from you: about two hours per department head in weeks 1 to 2, 90 minutes per employee for training, and one folder of export files. The pilot has a <strong>fixed price</strong>, agreed in the meeting, with no software license cost. You can stop at any point and keep everything built so far.</p>
+    <div class="foot"><span>The plan</span><span class="num">13 / 16</span></div>
+  </section>
+
+  <!-- 14: Measure success -->
+  <section class="slide">
+    <div class="eyebrow">Proof, not promises</div>
+    <h2>How we measure success</h2>
+    <ul class="points">
+      <li><strong>Hours saved per task</strong>, timed in week one, logged from then on</li>
+      <li>The new reports are <strong>actually used</strong>, not just delivered</li>
+      <li>Your processes documented, department by department</li>
+      <li>Your team <strong>able to use the tools</strong> without me</li>
+      <li>A clear ERP recommendation you can act on</li>
+    </ul>
+    <p class="lede" style="margin-top:24px;">These are the same five success criteria from your expectations paper. The pilot's first target: cut the build time of the chosen report at least in half. A report someone rebuilds every month, a day each time, is about twelve working days a year. Halving that is real time back.</p>
+    <div class="foot"><span>Proof, not promises</span><span class="num">14 / 16</span></div>
+  </section>
+
+  <!-- 15: Fair questions -->
+  <section class="slide">
+    <div class="eyebrow">Fair questions</div>
+    <h2>Questions you may already have</h2>
+    <div class="qa">
+      <div class="q">
+        <div class="qq">Will AI replace people here?</div>
+        <div class="qa-a">The approval rule keeps every decision and every customer relationship with your people. The aim is to shrink repetitive typing and checking. What you do with the freed hours is your call, not mine.</div>
+      </div>
+      <div class="q">
+        <div class="qq">Is our data safe?</div>
+        <div class="qa-a">Customer and pricing data only enters tools your IT has approved. Nothing goes into public AI tools. Written rules say what may enter which tool, agreed with your IT in week one.</div>
+      </div>
+      <div class="q">
+        <div class="qq">Why not wait for the new ERP?</div>
+        <div class="qa-a">Waiting means months more of the same manual work. Everything here runs on export files and agreed definitions, so it moves with you into whichever ERP you choose, and it makes that choice easier.</div>
+      </div>
+      <div class="q">
+        <div class="qq">What if you leave?</div>
+        <div class="qa-a">Everything stays with Top Spirit: the process maps, the glossary, the dashboards, and a trained go-to colleague in each department. It is built so your team can run it without me.</div>
+      </div>
+    </div>
+    <div class="foot"><span>Fair questions</span><span class="num">15 / 16</span></div>
+  </section>
+
+  <!-- 16: Next step -->
+  <section class="slide">
+    <div class="eyebrow">Next step</div>
+    <h2>A working meeting <span class="accent">at your office</span></h2>
+    <ul class="points">
+      <li><strong>45 minutes</strong>, at your office, at your convenience</li>
+      <li>We walk this plan together, page by page</li>
+      <li>You choose the pilot department and the first report</li>
+      <li>I put a <strong>fixed price for the 90-day pilot</strong> on the table</li>
+      <li>I bring the <strong>working dashboard preview</strong> and show it live</li>
+    </ul>
+    <p class="lede" style="margin-top:28px;">The meeting costs you nothing. Paid work starts only when you approve the pilot, and you can decide the same day. Start soon and the ground rules and first dashboard are in place before your busiest season, the Christmas quarter.</p>
+    <p class="lede" style="margin-top:14px;">Andrew Demczuk &middot; AngelServ by Angel Software Solutions</p>
+    <div class="foot"><span>Next step</span><span class="num">16 / 16</span></div>
+  </section>
+
+</div>
+
+<nav class="nav" id="dots" aria-label="Slide navigation"></nav>
+<div class="arrows">
+  <button id="prev" aria-label="Previous slide">&#8592;</button>
+  <button id="next" aria-label="Next slide">&#8594;</button>
+</div>
+<div class="hint">Arrow keys or click</div>
+
+<script>
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const dots = document.getElementById('dots');
+  let cur = 0;
+  slides.forEach((s, i) => {
+    const d = document.createElement('button');
+    d.className = 'dot'; d.setAttribute('aria-label', 'Slide ' + (i + 1));
+    d.addEventListener('click', () => go(i));
+    dots.appendChild(d);
+  });
+  function go(i) {
+    cur = Math.max(0, Math.min(slides.length - 1, i));
+    slides.forEach((s, j) => s.classList.toggle('active', j === cur));
+    Array.from(dots.children).forEach((d, j) => d.classList.toggle('on', j === cur));
+  }
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') go(cur + 1);
+    if (e.key === 'ArrowLeft' || e.key === 'PageUp') go(cur - 1);
+    if (e.key === 'Home') go(0);
+    if (e.key === 'End') go(slides.length - 1);
+  });
+  document.getElementById('next').addEventListener('click', () => go(cur + 1));
+  document.getElementById('prev').addEventListener('click', () => go(cur - 1));
+  go(0);
+</script>
