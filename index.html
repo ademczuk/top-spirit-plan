@@ -205,30 +205,44 @@
 </script>
 <script>
 /* Angel Software Solutions - in-browser text editor for this deck.
-   Toggle Edit, click any line to change it, Save copy downloads a self-contained HTML.
-   Edits persist in this browser (localStorage) per page. Hidden when printing. */
+   Hidden by default so a live presentation stays clean: click the faint pencil in the
+   top-left corner to reveal the bar. Toggle Edit, click any line to change it, Save copy
+   downloads a self-contained HTML. Edits persist in this browser (localStorage) per page.
+   Everything here is hidden when printing. */
 (function(){
   var KEY = 'tsdeck:' + location.pathname;
   var doc = document.documentElement;
   var SEL = '.slide .eyebrow, .slide h1, .slide h2, .slide h3, .slide .lede, .slide p, .slide li, .slide .foot span:not(.num), .slide .card .t, .slide .card .d, .slide .qa-q, .slide .qa-a, .slide .k, .slide .kpi, .slide .stat';
 
   var css =
-    '.tsedit-bar{position:fixed;top:14px;left:14px;z-index:99999;display:flex;gap:8px;align-items:center;'
+    '.tsedit-dot{position:fixed;top:10px;left:10px;z-index:99999;width:24px;height:24px;border-radius:50%;'
+    +'border:1px solid rgba(192,74,86,.5);background:rgba(18,14,13,.5);color:#e0868f;opacity:.22;'
+    +'display:flex;align-items:center;justify-content:center;cursor:pointer;font:600 12px/1 Inter,system-ui,sans-serif;'
+    +'-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);transition:opacity .2s,background .2s;padding:0}'
+    +'.tsedit-dot:hover,.tsedit-dot:focus{opacity:.95;background:rgba(139,46,56,.55);outline:none}'
+    +'html.tsedit-open .tsedit-dot{display:none}'
+    +'.tsedit-bar{position:fixed;top:10px;left:10px;z-index:99999;display:none;gap:8px;align-items:center;'
     +'font-family:Inter,system-ui,-apple-system,sans-serif;font-size:12px;letter-spacing:.02em}'
-    +'.tsedit-bar button{background:rgba(18,14,13,.82);color:#f4efe9;border:1px solid rgba(192,74,86,.55);'
+    +'html.tsedit-open .tsedit-bar{display:flex}'
+    +'.tsedit-bar button{background:rgba(18,14,13,.86);color:#f4efe9;border:1px solid rgba(192,74,86,.55);'
     +'border-radius:999px;padding:7px 15px;cursor:pointer;-webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px);font:inherit;transition:.15s}'
     +'.tsedit-bar button:hover{border-color:#c04a56;background:rgba(139,46,56,.42)}'
+    +'.tsedit-bar .x{padding:7px 12px;color:#cbbcbc}'
     +'.tsedit-bar .on{display:none;color:#e0868f;font-weight:600;padding-left:2px}'
     +'html.editing .tsedit-bar .on{display:inline}'
     +'html.editing .tsedit-bar .t{background:#8b2e38;border-color:#c04a56}'
     +'html.editing [data-ek]{outline:1px dashed rgba(192,74,86,.55);outline-offset:3px;border-radius:2px;cursor:text}'
     +'html.editing [data-ek]:focus{outline:1.5px solid #c04a56;background:rgba(0,0,0,.28)}'
-    +'@media print{.tsedit-bar{display:none!important}}';
+    +'@media print{.tsedit-bar,.tsedit-dot{display:none!important}}';
   var st = document.createElement('style'); st.className = 'tsedit-style'; st.textContent = css;
   (document.head || document.documentElement).appendChild(st);
 
+  var dot = document.createElement('button'); dot.className = 'tsedit-dot'; dot.type = 'button';
+  dot.title = 'Edit this deck'; dot.setAttribute('aria-label','Edit this deck'); dot.textContent = '✎';
+  (document.body || document.documentElement).appendChild(dot);
+
   var bar = document.createElement('div'); bar.className = 'tsedit-bar'; bar.setAttribute('role','toolbar'); bar.setAttribute('aria-label','Edit deck');
-  bar.innerHTML = '<button class="t" type="button">Edit text</button><button class="s" type="button">Save copy</button><button class="r" type="button" title="Discard your saved edits and reload">Reset</button><span class="on">editing</span>';
+  bar.innerHTML = '<button class="t" type="button">Edit text</button><button class="s" type="button">Save copy</button><button class="r" type="button" title="Discard your saved edits and reload">Reset</button><button class="x" type="button" title="Hide this bar (Esc)">Hide</button><span class="on">editing</span>';
   (document.body || document.documentElement).appendChild(bar);
 
   var nodes = Array.prototype.slice.call(document.querySelectorAll(SEL));
@@ -242,7 +256,8 @@
   function persist(){
     var out = {};
     nodes.forEach(function(n){ out[n.getAttribute('data-ek')] = n.innerHTML; });
-    try { localStorage.setItem(KEY, JSON.stringify(out)); } catch(e){}
+    try { localStorage.setItem(KEY, JSON.stringify(out)); }
+    catch(e){ console.warn('Angel deck: your text edits could not be saved in this browser (storage full or blocked). Use Save copy to keep them.', e); }
   }
 
   var editing = false;
@@ -253,6 +268,11 @@
     bar.querySelector('.t').textContent = on ? 'Done' : 'Edit text';
   }
 
+  function openBar(){ doc.classList.add('tsedit-open'); }
+  function closeBar(){ if(editing){ setEdit(false); persist(); } doc.classList.remove('tsedit-open'); }
+
+  dot.addEventListener('click', openBar);
+  bar.querySelector('.x').addEventListener('click', closeBar);
   bar.querySelector('.t').addEventListener('click', function(){ setEdit(!editing); if(!editing) persist(); });
 
   bar.querySelector('.r').addEventListener('click', function(){
@@ -264,7 +284,10 @@
   bar.querySelector('.s').addEventListener('click', function(){
     if(editing) setEdit(false);
     persist();
-    var refs = [document.querySelector('.tsedit-bar'), document.querySelector('.tsedit-style')]
+    /* Belt and suspenders: make sure no editor state leaks into the saved file. */
+    Array.prototype.forEach.call(doc.querySelectorAll('[contenteditable]'), function(n){ n.removeAttribute('contenteditable'); });
+    doc.classList.remove('editing','tsedit-open');
+    var refs = [document.querySelector('.tsedit-bar'), document.querySelector('.tsedit-style'), document.querySelector('.tsedit-dot')]
       .filter(Boolean).map(function(el){ return { el: el, parent: el.parentNode, next: el.nextSibling }; });
     refs.forEach(function(r){ r.el.remove(); });
     var html = '<!doctype html>\n' + doc.outerHTML;
@@ -276,19 +299,22 @@
     a.href = URL.createObjectURL(blob); a.download = base + '-edited.html';
     document.body.appendChild(a); a.click(); a.remove();
     setTimeout(function(){ URL.revokeObjectURL(a.href); }, 2000);
+    openBar();
   });
 
   document.addEventListener('input', function(e){ if(editing) persist(); });
 
-  /* Guard: while editing a line, arrow/space keys move the cursor and type, they do not flip slides. */
   document.addEventListener('keydown', function(e){
-    if(!editing) return;
-    var t = e.target;
-    if(t && t.isContentEditable){
-      if(e.key === 'Escape'){ setEdit(false); persist(); return; }
-      var navKeys = ['ArrowRight','ArrowLeft','ArrowUp','ArrowDown',' ','Spacebar','PageUp','PageDown','Home','End'];
-      if(navKeys.indexOf(e.key) > -1) e.stopPropagation();
+    if(editing){
+      var t = e.target;
+      if(t && t.isContentEditable){
+        if(e.key === 'Escape'){ closeBar(); return; }
+        var navKeys = ['ArrowRight','ArrowLeft','ArrowUp','ArrowDown',' ','Spacebar','PageUp','PageDown','Home','End'];
+        if(navKeys.indexOf(e.key) > -1) e.stopPropagation();
+      }
+      return;
     }
+    if(doc.classList.contains('tsedit-open') && e.key === 'Escape'){ closeBar(); }
   }, true);
 })();
 </script>
